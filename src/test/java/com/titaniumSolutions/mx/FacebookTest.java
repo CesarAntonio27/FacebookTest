@@ -4,6 +4,8 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.WillClose;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,12 +13,17 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class FacebookTest extends BasePage{ 
 	
 	private WebDriver driver;
+	private ChromeOptions options;
 	BasePage basePage = new BasePage();
+	
+	String newpassword = "480694";
+	String gmailaccount = "facebookttesting@gmail.com";	
 	
 	//localizadores
 	By newpublicationLocator = By.xpath("//span[contains(text(),'¿Qué estás pensando,')]");
@@ -32,21 +39,32 @@ public class FacebookTest extends BasePage{
 	By gmailLocator = By.xpath("(//input[@name='email'])[1]");
 	By passwordLocator = By.xpath("(//input[@name='pass'])[1]");
 	By loginLocator = By.xpath("(//label[@id='loginbutton'])[1]");
+	By inicioLocator = By.xpath("//a[@aria-label='Inicio']");
+	By seleccionarCuentaLocator = By.xpath("//input[@type='checkbox']");
+	By eliminarSeleccionLocator = By.xpath("(//div[@aria-label='Eliminar selección'])[2]");
+	By cerrarLocator = By.xpath("(//div[@aria-label='Cerrar'])[2]");
+	/*By iniciarPublicacionLocator = By.xpath("(//div[@role='button'])[16]");
+	By textodePublicacionLocator = By.xpath("(//div[@class='rq0escxv buofh1pr df2bnetk hv4rvrfc dati1w0a l9j0dhe7 k4urcfbm du4w35lb gbhij3x4'])");
+	By publicarLocator = By.xpath("//span[contains(text(),'Publicar')]");
+	
 	By Locator = By.xpath("");
 	By Locator = By.xpath("");
 	By Locator = By.xpath("");
+	By Locator = By.xpath("");
+	By Locator = By.xpath("");
+	By Locator = By.xpath("");
+	By Locator = By.xpath("");*/
+	By menudeCuentaLocator = By.xpath("//div[@aria-label='Cuenta']");
 	
 	
 	
 	@Before
 	public void setup() {
-		
+		options = new ChromeOptions();
+		options.addArguments("--disable-notifications");
 		System.setProperty("webdriver.chrome.driver", "./src/test/resources/chromedriver/chromedriver.exe");
-		driver = new ChromeDriver();
-		
+		driver = new ChromeDriver(options);
 		driver.manage().window().maximize();
-		driver.get("https://www.facebook.com/whitehat/accounts/");
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		
 		
 	}
@@ -55,10 +73,10 @@ public class FacebookTest extends BasePage{
 	@Test
 	public void createAccount() throws InterruptedException {
 		
-	
+		//accede a la pagina 
+		driver.get("https://www.facebook.com/whitehat/accounts/");
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		//inicia sesion con la cuenta principal
-		String newpassword = "480694";
-		String gmailaccount = "facebookttesting@gmail.com";	
 		driver.findElement(gmailLocator).sendKeys(gmailaccount);		
 		driver.findElement(passwordLocator).sendKeys(newpassword);
 		driver.findElement(loginLocator).click();
@@ -69,8 +87,8 @@ public class FacebookTest extends BasePage{
 		//crea una cuenta de prueba en fecbook con el user principal
 		driver.findElement(By.xpath("(//span[contains(text(),'Crear cuenta nueva')])[1]")).click();	
 		Thread.sleep(7000);
-		String accountTest = driver.findElement(By.xpath("(//div[@class='qzhwtbm6 knvmm38d'])[15]")).getText();
-		String accountTestPass = driver.findElement(By.xpath("(//div[@class='qzhwtbm6 knvmm38d'])[17]")).getText();
+		String accountTest = driver.findElement(By.xpath("(//span[@class='d2edcug0 hpfvmrgz qv66sw1b c1et5uql lr9zc1uh jq4qci2q a3bd9o3v knj5qynh oo9gr5id hzawbc8m'])[3]")).getText();
+		String accountTestPass = driver.findElement(By.xpath("(//span[@class='d2edcug0 hpfvmrgz qv66sw1b c1et5uql lr9zc1uh jq4qci2q a3bd9o3v knj5qynh oo9gr5id hzawbc8m'])[4]")).getText();
 		Thread.sleep(4000);
 		driver.findElement(By.xpath("(//span[contains(text(),'Cerrar')])")).click();
 		Thread.sleep(4000);
@@ -85,66 +103,80 @@ public class FacebookTest extends BasePage{
 		
 		
 		
+		/*driver.findElement(By.xpath("")).click();
 		driver.findElement(By.xpath("")).click();
 		driver.findElement(By.xpath("")).click();
 		driver.findElement(By.xpath("")).click();
 		driver.findElement(By.xpath("")).click();
-		driver.findElement(By.xpath("")).click();
-		
-		/*
-		driver.findElement(By.xpath("//input[@name='reg_email_confirmation__']")).sendKeys(gmailaccount);		
-		driver.findElement(By.xpath("//input[@name='reg_passwd__']")).sendKeys( "1234.Pass");		
-		driver.findElement(By.xpath("//option[contains(text(),'jul')]")).click();		
-		driver.findElement(By.xpath("//Select[@name='birthday_year']")).click();	
-		driver.findElement(By.xpath("//option[contains(text(),'1999')]")).click();	
-		driver.findElement(By.xpath("//label[contains(text(),'Mujer')]")).click();
-		driver.findElement(By.xpath("//button[contains(text(),'Registrarte')]")).click();
-		//driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-		Thread.sleep(10000);
-		//accede a gmail
-		driver.get("https://www.google.com/intl/es-419/gmail/about/#");
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-		//inicia sesion con el user para obtener el codigo de seguridad
-		driver.findElement(By.xpath("(//a[contains(text(),'Acceder')])[2]")).click();
-		ArrayList<String> tabs_windows = new ArrayList<String> (driver.getWindowHandles());
-	    driver.switchTo().window(tabs_windows.get(1));
-		driver.findElement(By.xpath("//input[@name='identifier']")).sendKeys("facebookttesting@gmail.com");
-		driver.findElement(By.xpath("//span[contains(text(),'Siguiente')]")).click();
-		Thread.sleep(3000);
-		driver.findElement(By.xpath("//input[@name='password']")).sendKeys(gmailpassword);
-		driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();//salta error "NoSUchElementException; no such element: Unable to locate element"
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		String codigo = driver.findElement(By.xpath("//td[@style='font-size:11px;font-family:LucidaGrande,tahoma,verdana,arial,sans-serif;padding:10px;background-color:#f2f2f2;border-left:1px solid #ccc;border-right:1px solid #ccc;border-top:1px solid #ccc;border-bottom:1px solid #ccc']")).getText();
-		driver.findElement(By.xpath("(//span[contains(text(),'Confirmar')])")).click();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		//vuelve a facebook para confirmar cuenta 
-		driver.findElement(By.xpath("//input[@name='pass']")).sendKeys(gmailpassword);
-		driver.findElement(By.xpath("//button[@name='login']")).click();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		driver.findElement(By.xpath("//input[@name='code']")).sendKeys(codigo);
-		driver.findElement(By.xpath("//button[@name='confirm']")).click();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		driver.findElement(By.xpath("//a[contains(text(),'Aceptar')]")).click();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		*/
-		
-		
-		
-
-		
+	
 		
 		driver.findElement(By.xpath("")).sendKeys();
 		driver.findElement(By.xpath("")).sendKeys();
-		driver.findElement(By.xpath("")).sendKeys();
+		driver.findElement(By.xpath("")).sendKeys();*/
 		
 		
 		
 		
 	};	
+	
+	@Test
+	public void createPost() throws InterruptedException{
+	
+		//crea la publicacion
+		driver.findElement(newpublicationLocator).click();
+		driver.findElement(publicationtextLocator).sendKeys("hola mundo,");
+		driver.findElement(publicarLocator).click();
+		Thread.sleep(5000);
+		
+		
+		
+		
 
-	@After
-	public void endTest() {
-		//driver.quit();
+	};
+	
+	@Test
+	public void editPost() throws InterruptedException{
+	
+		
+		
+		//edita la publicacion
+		driver.findElement(opcionespublicacionLocator).click();
+		driver.findElement(editarpublicacionLocator).click();
+		driver.findElement(publicationtextLocator).sendKeys(" fue un gusto");
+		driver.findElement(guardarpublicacionLocator).click();
+		Thread.sleep(4000);
+		
+		
+	};
+	
+	@Test
+	public void deletePost() throws InterruptedException{
+	
+		driver.findElement(opcionespublicacionLocator).click();
+		driver.findElement(borrarpublicacionLocator).click();
+		driver.findElement(confirmareliminacionLocator).click();
+		Thread.sleep(4000);
+		driver.findElement(menuLocator).click();
+		driver.findElement(logoutLocator).click();
+		
+	};
+	
+
+	@Test
+	public void deleteAccountAndEndTheTest() throws InterruptedException{
+		
+		driver.get("https://www.facebook.com/whitehat/accounts/");
+		driver.findElement(gmailLocator).sendKeys(gmailaccount);		
+		driver.findElement(passwordLocator).sendKeys(newpassword);
+		driver.findElement(loginLocator).click();
+		Thread.sleep(5000);
+		driver.findElement(seleccionarCuentaLocator).click();
+		driver.findElement(eliminarSeleccionLocator).click();
+		Thread.sleep(7000);
+		driver.findElement(cerrarLocator).click();
+		driver.findElement(menuLocator).click();
+		driver.findElement(logoutLocator).click();
+		driver.quit();
 		
 	}
 	
